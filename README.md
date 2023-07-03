@@ -1,66 +1,204 @@
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Assignment 18
 
-## About Laravel
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Task 1:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+To create a new migration file for the "categories" table with the specified columns, you can use the following command:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+php artisan make:migration create_categories_table --create=categories
 
-## Learning Laravel
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Open the generated migration file and use the up() method to define the table structure:
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+class CreateCategoriesTable extends Migration
+{
+    public function up()
+    {
+        Schema::create('categories', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->timestamps();
+        });
+    }
 
-## Laravel Sponsors
+    public function down()
+    {
+        Schema::dropIfExists('categories');
+    }
+}
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+Once you have defined the migration file, you can run the migration using the following command:
 
-### Premium Partners
+php artisan migrate
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
 
-## Contributing
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Task 2:
 
-## Code of Conduct
+To create a new model named "Category" associated with the "categories" table, you can follow these steps in a Laravel application:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+1. Generate the Category model by running the following command in the terminal:
 
-## Security Vulnerabilities
+php artisan make:model Category
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
 
-## License
+2. Open the generated "Category.php" file and define the necessary properties and relationships. Here's an example:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+<?php
+
+namespace App;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Category extends Model
+{
+    protected $fillable = ['name'];
+
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
+}
+
+
+In this example, we assume there's a "Product" model and a relationship where a Category has many Products.
+
+a. The $fillable property is used to specify which attributes can be mass-assigned when creating or updating a Category instance. In this case, we allow the "name" attribute to be mass-assigned.
+
+b. The products() method defines a one-to-many relationship between the Category and Product models. It indicates that a Category can have multiple products, assuming there's a "products" table and a "category_id" foreign key column in the products table.
+
+
+
+
+
+
+
+
+
+## Task 3:
+
+To add a foreign key constraint to the "posts" table, referencing the "categories" table on the "category_id" column, you can create a new migration file. Here's an example of a migration file in Laravel's migration syntax:
+
+
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class AddCategoryIdToPostsTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::table('posts', function (Blueprint $table) {
+            $table->unsignedBigInteger('category_id')->nullable();
+            $table->foreign('category_id')->references('id')->on('categories');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::table('posts', function (Blueprint $table) {
+            $table->dropForeign(['category_id']);
+            $table->dropColumn('category_id');
+        });
+    }
+}
+
+
+To create this migration file, you can run the following command in the terminal:
+
+
+php artisan make:migration add_category_id_to_posts_table --table=posts
+
+Once the migration file is created, you can run the migrations using the following command:
+
+php artisan migrate
+
+
+
+## Task 4:
+
+To create a relationship between the "Post" and "Category" models in Laravel, you can define the appropriate methods in each model. Based on your requirement, a post belongs to a category, and a category can have multiple posts. Here's an example:
+
+In the "Post" model (app/Post.php), define a category() method to establish the relationship:
+
+
+<?php
+
+namespace App;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Post extends Model
+{
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+}
+
+
+In the "Category" model (app/Category.php), define a posts() method to establish the inverse relationship:
+
+
+<?php
+
+namespace App;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Category extends Model
+{
+    public function posts()
+    {
+        return $this->hasMany(Post::class);
+    }
+}
+
+
+
+
+
+
+In this example, we assume that the "Post" model has a foreign key column named "category_id" that references the "id" column of the "categories" table. By defining the category() method using belongsTo() in the "Post" model, Laravel understands that a post belongs to a category.
+
+Similarly, by defining the posts() method using hasMany() in the "Category" model, Laravel understands that a category can have multiple posts.
+
+With these relationships defined, you can now access the related models using Eloquent's dynamic properties. For example, to retrieve the category of a post:
+
+
+
+
+$post = Post::find(1);
+$category = $post->category;
+
+
+Or to retrieve the posts belonging to a category:
+
+
+$category = Category::find(1);
+$posts = $category->posts;
+
+
+
+
+## Task 5:
+
